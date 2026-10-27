@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Seja bem-vindo ao Sistema Circulatório</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: 100svh;
+            margin: 0;
+            padding: clamp(12px, 3vh, 24px) 16px;
+            background: radial-gradient(circle at top, #34111e 0, #160b10 45%, #09090d 100%);
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        body::before,
+        body::after {
+            position: fixed;
+            z-index: 0;
+            top: 50%;
+            width: clamp(90px, 15vw, 190px);
+            aspect-ratio: 1;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath d='M100 175 25 100C-10 65 45 10 85 50l15 15 15-15c40-40 95 15 60 50z' fill='%23a20d3e' stroke='%23ffd1dc' stroke-width='5' stroke-linejoin='round'/%3E%3Cpath d='M100 70V35m0 48L75 58m25 44 25-25' fill='none' stroke='%23ffe6ec' stroke-width='8' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+            content: "";
+            opacity: 0.2;
+            pointer-events: none;
+            transform: translateY(-50%);
+        }
+
+        body::before {
+            left: clamp(8px, 5vw, 72px);
+        }
+
+        body::after {
+            right: clamp(8px, 5vw, 72px);
+            transform: translateY(-50%) scaleX(-1);
+        }
+
+        body > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            width: fit-content;
+            max-width: 100%;
+            margin: clamp(8px, 2vh, 20px) auto clamp(16px, 3vh, 28px);
+            padding: clamp(12px, 2vh, 20px) clamp(16px, 3vw, 32px);
+            border: 1px solid #a83b5e;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #790d32, #4b0921);
+            box-shadow: 0 12px 32px #0008;
+            color: #fff;
+            font-size: clamp(1.75rem, 7vw, 3.75rem);
+            text-align: center;
+        }
+         
+        h2 {
+            margin: 0 0 clamp(14px, 2vh, 24px);
+            color: #fff;
+            font-size: clamp(1.3rem, 4vw, 2.25rem);
+            font-family: Georgia, "Times New Roman", serif;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        div[id^="pagina"] {
+            width: min(100%, 760px);
+            margin: clamp(12px, 2vh, 24px) auto;
+            padding: clamp(16px, 3vh, 36px) clamp(18px, 4vw, 40px);
+            border: 1px solid #713047;
+            border-radius: 20px;
+            background: linear-gradient(145deg, #24141b, #171116);
+            box-shadow: 0 18px 48px #0009;
+        }
+
+        button {
+            width: min(100%, 520px);
+            min-height: 48px;
+            padding: 10px 20px;
+            border: 1px solid #c24c70;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #9a1742, #6b1030);
+            box-shadow: 0 6px 16px #0005;
+            color: #fff;
+            font-size: clamp(0.95rem, 3vw, 1.2rem);
+            font-weight: 600;
+            cursor: pointer;
+            display: block;
+            margin: clamp(8px, 1.5vh, 12px) auto;
+            transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #bd2858, #861641);
+            box-shadow: 0 9px 22px #0007;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:focus-visible {
+            outline: 3px solid #ffd3df;
+            outline-offset: 3px;
+        }
+
+        #aviso {
+            width: min(100%, 520px);
+            margin: 12px auto;
+            padding: 18px;
+            border: 1px solid #c24c70;
+            border-radius: 16px;
+            background: #24141b;
+            text-align: center;
+        }
+
+        #carinha {
+            margin: 0 0 8px;
+            font-size: 3rem;
+        }
+
+        #mensagemAviso {
+            margin: 0;
+            font-size: 1.15rem;
+        }
+
+        #inicio,
+        #ranking {
+            width: min(100%, 760px);
+            margin: 12px auto;
+            padding: clamp(16px, 3vh, 36px) clamp(18px, 4vw, 40px);
+            border: 1px solid #713047;
+            border-radius: 20px;
+            background: linear-gradient(145deg, #24141b, #171116);
+            box-shadow: 0 18px 48px #0009;
+        }
+
+        #nomeJogador {
+            display: block;
+            width: min(100%, 520px);
+            min-height: 48px;
+            margin: 12px auto;
+            padding: 10px 14px;
+            border: 1px solid #c24c70;
+            border-radius: 12px;
+            background: #fff;
+            color: #171116;
+            font-size: 1rem;
+        }
+
+        #ranking h2 {
+            margin-top: 0;
+        }
+
+        #listaRanking {
+            width: min(100%, 520px);
+            margin: 0 auto;
+            padding-left: 2rem;
+        }
+
+        #listaRanking li {
+            padding: 8px 0;
+            border-bottom: 1px solid #713047;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+            }
+
+            body::before,
+            body::after {
+                width: 80px;
+                opacity: 0.12;
+            }
+
+            div[id^="pagina"] {
+                padding: 18px 14px;
+            }
+        }
+
+        @media (max-height: 650px) {
+            body {
+                padding-top: 8px;
+                padding-bottom: 8px;
+            }
+
+            h1 {
+                margin-top: 4px;
+                margin-bottom: 12px;
+            }
+
+            div[id^="pagina"] {
+                padding-top: 12px;
+                padding-bottom: 12px;
+            }
+
+            h2 {
+                margin-bottom: 10px;
+            }
+
+            button {
+                min-height: 40px;
+                margin-top: 6px;
+                margin-bottom: 6px;
+                padding-top: 7px;
+                padding-bottom: 7px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 id="sistemac">SISTEMA CIRCULATÓRIO</h1>
+    <div id="inicio">
+        <h2>Digite seu nome para começar</h2>
+        <form id="formInicio">
+            <label for="nomeJogador">Seu nome (até 24 caracteres)</label>
+            <input id="nomeJogador" name="nome" type="text" maxlength="24" autocomplete="given-name" required>
+            <button type="submit">COMEÇAR</button>
+        </form>
+    </div>
+    <p id="pontuacao" style="display:none;text-align:center;font-size:1.2rem;">Pontos: 0</p>
+    <div id="aviso" role="status" aria-live="polite" style="display:none">
+        <p id="carinha"></p>
+        <p id="mensagemAviso"></p>
+        <button id="continuar" type="button">Próxima pergunta</button>
+        <div id="ranking" style="display:none">
+            <h2>Top 10 jogadores</h2>
+            <p id="rankingStatus" role="status" aria-live="polite"></p>
+            <ol id="listaRanking"></ol>
+        </div>
+    </div>
+   <div id="pagina1jogo" style="display: none;"> 
+    <h2 id="pergunta1">1. qual órgão bombeia o sangue? </h2>
+    <button id="coracao" data-correta="true"> coração </button>
+    <button> sangue </button>
+    <button> veias </button>
+   </div>
+    <script>
+     function comecarjogo() {
+     const nome = document.getElementById("nomeJogador").value.trim();
+     if (!nome) {
+         document.getElementById("nomeJogador").focus();
+         return;
+     }
+     nomeJogador = nome;
+     document.getElementById("inicio").style.display = "none";
+     document.getElementById("sistemac").style.display = "none";
+     document.getElementById("pagina1jogo").style.display="block";	 
+     document.getElementById("pontuacao").style.display="block";
+     }
+
+     document.getElementById("formInicio").addEventListener("submit", function(event) {
+         event.preventDefault();
+         comecarjogo();
+     });
+    </script>
+
+    <div id="pagina2" style="display:none">
+        <h2 id="p2pergunta1"> 2.qual é a função do sistema circulatório? </h2>
+        <button> produzir hormônios </button>
+        <button id="transportar" data-correta="true"> transportar oxigênio e nutrientes </button>
+        <button> controlar a temperatura do corpo </button>
+    </div>
+    
+    <script>
+        function proximaPagina() {
+            document.getElementById("pagina1jogo").style.display = "none";
+            document.getElementById("pagina2").style.display = "block";
+            document.querySelector("#transportar").addEventListener("click", function() {
+                proximaPagina2();
+            });
+        }
+    </script>
+
+    <div id="pagina3" style="display:none">
+        <h2 id="p3pergunta1"> 3. Qual célula transporta principalmente oxigênio? </h2>
+        <button id="globulos" data-correta="true"> glóbulos vermelhos</button>
+        <button> glóbulos brancos</button>
+        <button> plaquetas</button>    
+    </div>
+
+    <script>
+        function proximaPagina2() {
+            document.getElementById("pagina2").style.display= "none";
+            document.getElementById("pagina3").style.display= "block";
+            document.querySelector("#globulos").addEventListener("click", function() {
+                proximaPagina3();
+            });
+        }
+    </script>
+
+    <div id="pagina4" style="display:none">
+        <h2 id="pergunta5">4. As artérias são os vasos sanguíneos responsáveis por levar o sangue de volta ao coração </h2>
+        <button> verdadeiro </button>
+        <button id="p4pergunta1" data-correta="true"> falso </button>
+    </div>
+    
+    <script>
+        function proximaPagina3() {
+            document.getElementById("pagina3").style.display= "none";
+            document.getElementById("pagina4").style.display= "block";
+            document.querySelector("#p4pergunta1").addEventListener("click", function() {
+                proximaPagina4();
+            });            
+        }
+    </script>
+
+    <div id="pagina5" style="display:none">
+        <h2 id="pergunta6">5. Qual é a função dos glóbulos brancos? </h2>
+        <button id="defender" data-correta="true"> defender o corpo contra infecções </button>
+        <button> transportar oxigênio </button>
+        <button> coagular o sangue </button>
+    </div>
+    
+    <script>
+        function proximaPagina4() {
+            document.getElementById("pagina4").style.display = "none";
+            document.getElementById("pagina5").style.display = "block";
+            document.querySelector("#defender").addEventListener("click", function() {
+                proximaPagina5();
+            });
+        }
+    </script>
+
+    <div id="pagina6"  style="display:none">
+       <h2 id="pergunta7">6. O que costuma acontecer com a frequência cardíaca durante os exercícios?</h2>
+       <button id="aumentar" data-correta="true"> aumentar </button>
+       <button> diminuir</button>
+       <button> permanecer a mesma</button>
+    
+    </div>
+
+    <div id="pagina7" style="display:none">
+       <h2>7. Qual vaso sanguíneo geralmente leva o sangue de volta ao coração?</h2>
+       <button>Artéria</button>
+       <button id="resposta7" data-correta="true">Veia</button>
+       <button>Capilar</button>
+    </div>
+    <script>
+       function proximaPagina6() {
+           document.getElementById("pagina6").style.display = "none";
+           document.getElementById("pagina7").style.display = "block";
+           document.getElementById("resposta7").addEventListener("click", function() {
+               proximaPagina7();
+           });
+       }
+    </script>
+
+    <div id="pagina8" style="display:none">
+       <h2>8. Onde acontecem as trocas de substâncias entre o sangue e os tecidos?</h2>
+       <button id="resposta8" data-correta="true">Nos capilares</button>
+       <button>Nas artérias</button>
+       <button>Nas válvulas</button>
+    </div>
+    <script>
+       function proximaPagina7() {
+           document.getElementById("pagina7").style.display = "none";
+           document.getElementById("pagina8").style.display = "block";
+           document.getElementById("resposta8").addEventListener("click", function() {
+               proximaPagina8();
+           });
+       }
+    </script>
+
+    <div id="pagina9" style="display:none">
+       <h2>9. Qual componente do sangue ajuda na coagulação?</h2>
+       <button>Glóbulos vermelhos</button>
+       <button>Plasma</button>
+       <button id="resposta9" data-correta="true">Plaquetas</button>
+    </div>
+    <script>
+       function proximaPagina8() {
+           document.getElementById("pagina8").style.display = "none";
+           document.getElementById("pagina9").style.display = "block";
+           document.getElementById("resposta9").addEventListener("click", function() {
+               proximaPagina9();
+           });
+       }
+    </script>
+
+    <div id="pagina10" style="display:none">
+       <h2>10. Qual é a parte líquida do sangue?</h2>
+       <button>Hemoglobina</button>
+       <button id="resposta10" data-correta="true">Plasma</button>
+       <button>Plaquetas</button>
+    </div>
+    <script>
+       function proximaPagina9() {
+           document.getElementById("pagina9").style.display = "none";
+           document.getElementById("pagina10").style.display = "block";
+           document.getElementById("resposta10").addEventListener("click", function() {
+               proximaPagina10();
+           });
+       }
+    </script>
+
+    <div id="pagina11" style="display:none">
+       <h2>11. Qual é o nome da circulação entre o coração e os pulmões?</h2>
+       <button id="resposta11" data-correta="true">Circulação pulmonar</button>
+       <button>Circulação sistêmica</button>
+       <button>Circulação digestiva</button>
+    </div>
+    <script>
+       function proximaPagina10() {
+           document.getElementById("pagina10").style.display = "none";
+           document.getElementById("pagina11").style.display = "block";
+           document.getElementById("resposta11").addEventListener("click", function() {
+               proximaPagina11();
+           });
+       }
+    </script>
+
+    <div id="pagina12" style="display:none">
+       <h2>12. Qual é o nome da circulação que leva sangue do coração para o resto do corpo?</h2>
+       <button>Circulação pulmonar</button>
+       <button id="resposta12" data-correta="true">Circulação sistêmica</button>
+       <button>Circulação renal</button>
+    </div>
+    <script>
+       function proximaPagina11() {
+           document.getElementById("pagina11").style.display = "none";
+           document.getElementById("pagina12").style.display = "block";
+           document.getElementById("resposta12").addEventListener("click", function() {
+               proximaPagina12();
+           });
+       }
+    </script>
+
+    <div id="pagina13" style="display:none">
+       <h2>13. O que os glóbulos vermelhos transportam principalmente?</h2>
+       <button>Nutrientes para os ossos</button>
+       <button>Anticorpos</button>
+       <button id="resposta13" data-correta="true">Oxigênio</button>
+    </div>
+    <script>
+       function proximaPagina12() {
+           document.getElementById("pagina12").style.display = "none";
+           document.getElementById("pagina13").style.display = "block";
+           document.getElementById("resposta13").addEventListener("click", function() {
+               proximaPagina13();
+           });
+       }
+    </script>
+
+    <div id="pagina14" style="display:none">
+       <h2>14. Qual é a função das válvulas do coração?</h2>
+       <button>Produzir células sanguíneas</button>
+       <button id="resposta14" data-correta="true">Ajudar o sangue a seguir na direção correta</button>
+       <button>Levar oxigênio aos pulmões</button>
+    </div>
+    <script>
+       function proximaPagina13() {
+           document.getElementById("pagina13").style.display = "none";
+           document.getElementById("pagina14").style.display = "block";
+           document.getElementById("resposta14").addEventListener("click", function() {
+               proximaPagina14();
+           });
+       }
+    </script>
+
+    <div id="pagina15" style="display:none">
+       <h2>15. O que é a pulsação?</h2>
+       <button>A quantidade de ar nos pulmões</button>
+       <button>A temperatura do sangue</button>
+       <button id="resposta15" data-correta="true">O ritmo das batidas do coração sentido nas artérias</button>
+    </div>
+    <script>
+       function proximaPagina14() {
+           document.getElementById("pagina14").style.display = "none";
+           document.getElementById("pagina15").style.display = "block";
+           document.getElementById("resposta15").addEventListener("click", function() {
+               proximaPagina15();
+           });
+       }
+    </script>
+
+    <div id="pagina16" style="display:none">
+       <h2>16. O que a pressão arterial mede?</h2>
+       <button id="resposta16" data-correta="true">A força do sangue contra as paredes das artérias</button>
+       <button>A quantidade de oxigênio no ar</button>
+       <button>A temperatura do coração</button>
+    </div>
+    <script>
+       function proximaPagina15() {
+           document.getElementById("pagina15").style.display = "none";
+           document.getElementById("pagina16").style.display = "block";
+           document.getElementById("resposta16").addEventListener("click", function() {
+               proximaPagina16();
+           });
+       }
+    </script>
+
+    <div id="pagina17" style="display:none">
+       <h2>17. Quantas cavidades tem o coração humano?</h2>
+       <button>Duas</button>
+       <button id="resposta17" data-correta="true">Quatro</button>
+       <button>Seis</button>
+    </div>
+    <script>
+       function proximaPagina16() {
+           document.getElementById("pagina16").style.display = "none";
+           document.getElementById("pagina17").style.display = "block";
+           document.getElementById("resposta17").addEventListener("click", function() {
+               proximaPagina17();
+           });
+       }
+    </script>
+
+    <div id="pagina18" style="display:none">
+       <h2>18. Qual é a maior artéria do corpo humano?</h2>
+       <button>Veia cava</button>
+       <button>Artéria pulmonar</button>
+       <button id="resposta18" data-correta="true">Aorta</button>
+    </div>
+    <script>
+       function proximaPagina17() {
+           document.getElementById("pagina17").style.display = "none";
+           document.getElementById("pagina18").style.display = "block";
+           document.getElementById("resposta18").addEventListener("click", function() {
+               proximaPagina18();
+           });
+       }
+    </script>
+
+    <div id="pagina19" style="display:none">
+       <h2>19. Qual hábito ajuda a cuidar do sistema circulatório?</h2>
+       <button>Fumar</button>
+       <button id="resposta19" data-correta="true">Praticar atividade física regularmente</button>
+       <button>Evitar beber água</button>
+    </div>
+    <script>
+       function proximaPagina18() {
+           document.getElementById("pagina18").style.display = "none";
+           document.getElementById("pagina19").style.display = "block";
+           document.getElementById("resposta19").addEventListener("click", function() {
+               proximaPagina19();
+           });
+       }
+    </script>
+
+    <div id="pagina20" style="display:none">
+       <h2>20. O que acontece com o coração quando estamos em repouso, em comparação com exercícios?</h2>
+       <button>Geralmente bate mais rápido</button>
+       <button>Para de bombear sangue</button>
+       <button id="resposta20" data-correta="true">Geralmente bate mais devagar</button>
+    </div>
+    <script>
+       function proximaPagina19() {
+           document.getElementById("pagina19").style.display = "none";
+           document.getElementById("pagina20").style.display = "block";
+           document.getElementById("resposta20").addEventListener("click", function() {
+               proximaPagina20();
+           });
+       }
+    </script>
+
+    <script>
+       function proximaPagina5() {
+           document.getElementById("pagina5").style.display = "none";
+           document.getElementById("pagina6").style.display = "block";
+           document.querySelector("#aumentar").addEventListener("click", function() {
+               proximaPagina6();
+           });
+       }
+    </script>
+
+    <script>
+       async function proximaPagina20() {
+           document.getElementById("pagina20").style.display = "none";
+           document.getElementById("carinha").textContent = "🎉";
+           document.getElementById("mensagemAviso").textContent =
+               "Parabéns, " + nomeJogador + "! Você concluiu o jogo com " + pontos + " pontos.";
+           document.getElementById("continuar").style.display = "none";
+           document.getElementById("aviso").style.display = "block";
+           document.getElementById("ranking").style.display = "block";
+           await salvarPontuacaoEExibirRanking();
+       }
+    </script>
+
+    <script>
+        let pontos = 0;
+        let nomeJogador = "";
+        const perguntasEmDobro = [5, 10, 15, 20];
+        let proximaAcao = null;
+        let perguntaAtual = 0;
+
+        async function salvarPontuacaoEExibirRanking() {
+            const status = document.getElementById("rankingStatus");
+            const lista = document.getElementById("listaRanking");
+            status.textContent = "Salvando sua pontuação e carregando o ranking...";
+            lista.replaceChildren();
+
+            try {
+                const salvarResposta = await fetch("/api/leaderboard", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name: nomeJogador, score: pontos })
+                });
+                if (!salvarResposta.ok) {
+                    const erro = await salvarResposta.json();
+                    throw new Error(erro.error || "Não foi possível salvar a pontuação.");
+                }
+
+                const rankingResposta = await fetch("/api/leaderboard");
+                if (!rankingResposta.ok) {
+                    const erro = await rankingResposta.json();
+                    throw new Error(erro.error || "Não foi possível carregar o ranking.");
+                }
+
+                const { ranking } = await rankingResposta.json();
+                if (!Array.isArray(ranking) || ranking.length === 0) {
+                    status.textContent = "Ainda não há pontuações no ranking.";
+                    return;
+                }
+
+                ranking.forEach(function(jogador) {
+                    const item = document.createElement("li");
+                    item.textContent = jogador.name + " — " + jogador.score + " pontos";
+                    lista.appendChild(item);
+                });
+                status.textContent = "Sua pontuação foi registrada.";
+            } catch (erro) {
+                status.textContent =
+                    "Não foi possível salvar ou carregar o ranking. Confira a configuração do Upstash no Vercel. " +
+                    erro.message;
+            }
+        }
+
+        document.addEventListener("click", function(event) {
+            if (!(event.target instanceof Element)) {
+                return;
+            }
+
+            if (event.target.closest("#continuar")) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                if (proximaAcao) {
+                    const continuarJogo = proximaAcao;
+                    proximaAcao = null;
+                    document.getElementById("aviso").style.display = "none";
+                    if (perguntaAtual < 20) {
+                        document.getElementById("sistemac").style.display = "block";
+                        document.getElementById("pontuacao").style.display = "block";
+                    }
+                    continuarJogo();
+                }
+                return;
+            }
+
+            const botao = event.target.closest("button");
+            const pagina = botao && botao.closest('div[id^="pagina"]');
+            if (!botao || !pagina || pagina.style.display === "none") {
+                return;
+            }
+
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            const numeroPergunta = Number(pagina.id.match(/\d+/)[0]);
+            perguntaAtual = numeroPergunta;
+            const acertou = botao.dataset.correta === "true";
+            if (acertou) {
+                const pontosGanhos = perguntasEmDobro.includes(numeroPergunta) ? 20 : 10;
+                pontos += pontosGanhos;
+                document.getElementById("pontuacao").textContent = "Pontos: " + pontos;
+                document.getElementById("carinha").textContent = "😊";
+                document.getElementById("mensagemAviso").textContent =
+                    "Você acertou! Ganhou " + pontosGanhos + " pontos.";
+            } else {
+                document.getElementById("carinha").textContent = "😞";
+                document.getElementById("mensagemAviso").textContent =
+                    "Você errou! Vamos para a próxima pergunta.";
+            }
+
+            pagina.style.display = "none";
+            document.getElementById("sistemac").style.display = "none";
+            document.getElementById("pontuacao").style.display = "none";
+            const proximaFuncao = numeroPergunta === 1 ? proximaPagina : window["proximaPagina" + numeroPergunta];
+            if (typeof proximaFuncao !== "function") {
+                throw new Error("Não foi encontrada a função para avançar da pergunta " + numeroPergunta + ".");
+            }
+            proximaAcao = proximaFuncao;
+            document.getElementById("continuar").textContent =
+                numeroPergunta === 20 ? "Ver resultado" : "Próxima pergunta";
+            document.getElementById("continuar").style.display = "block";
+            document.getElementById("aviso").style.display = "block";
+        }, true);
+    </script>
+
+</body>
+
+</html>
